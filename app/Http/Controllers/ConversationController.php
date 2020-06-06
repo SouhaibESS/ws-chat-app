@@ -23,7 +23,7 @@ class ConversationController extends Controller
     {
         $user = Auth::user();
 
-        $conversations = $user->conversations;
+        $conversations = $user->conversations()->orderBy('updated_at', 'desc')->get();
 
         return response()->json([
             'success' => true, 

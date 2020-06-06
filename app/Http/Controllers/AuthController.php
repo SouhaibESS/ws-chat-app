@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -67,6 +68,16 @@ class AuthController extends Controller
             'email' => $request->json()->get('email'),
             'password' => Hash::make($request->json()->get('password'))
         ]);
+
+        // check if there's a contact with this email
+        // modify 'is_registered' to true 
+        $email = $request->json()->get('email');
+        $contacts = Contact::where('email', $email)->get(); // we can find multiple that contact in associated with other users
+        foreach($contacts as $contact) 
+        {
+            $contact->is_registered = 1;
+            $contact->save();
+        }
 
         $token = JWTAuth::fromUser($user);
 
