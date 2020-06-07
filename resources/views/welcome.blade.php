@@ -3,7 +3,6 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
         <title>Laravel</title>
 
         <!-- Fonts -->
@@ -64,7 +63,7 @@
         </style>
     </head>
     <body>
-        <div class="flex-center position-ref full-height">
+        <div id ='app' class="flex-center position-ref full-height">
             @if (Route::has('login'))
                 <div class="top-right links">
                     @auth
@@ -96,5 +95,15 @@
                 </div>
             </div>
         </div>
+        {{-- this part is just for test purposes --}}
+        <script src="{{asset('js/app.js')}}"></script>
+        <script>
+            Echo.private('user.1')
+                .listen('newMessageEvent', (message) => {
+                    console.log(message );
+                });
+        </script>
+        {{--  it ends here --}}
+
     </body>
 </html>

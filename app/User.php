@@ -58,6 +58,16 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
+    /**
+     * The channels the user receives notification broadcasts on.
+     *
+     * @return string
+     */
+    public function receivesBroadcastNotificationsOn()
+    {
+        return 'user.' . $this->id;
+    }
+
     public function conversations()
     {
         return $this->belongsToMany(Conversation::class);

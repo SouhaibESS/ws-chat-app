@@ -2,14 +2,14 @@
 
 namespace App\Http\Resources;
 
-use App\Contact;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\User as UserResource;
 use App\Http\Resources\Message as MessageResource;
 use App\Http\Resources\Contact as ContactResource;
 use Illuminate\Support\Facades\Auth;
+use App\Contact;
 
-class Conversation extends JsonResource
+class ConversationOnly extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -32,10 +32,12 @@ class Conversation extends JsonResource
         else 
             $other_user = new UserResource($user);
 
+        $lastMessage = $this->messages()->latest()->first();
+
         return [
             'id' => $this->id, 
             'updated_at' => $this->updated_at,
-            'messages' => MessageResource::collection($this->messages), 
+            'last_message' => new MessageResource($lastMessage), 
             'other_user' => $other_user
         ];
     }
