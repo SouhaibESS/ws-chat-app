@@ -19,7 +19,7 @@ class ConversationController extends Controller
     {
         $this->middleware('auth:api');
     }
-    
+
 
     public function index()
     {
@@ -28,7 +28,7 @@ class ConversationController extends Controller
         $conversations = $user->conversations()->orderBy('updated_at', 'desc')->get();
 
         return response()->json([
-            'success' => true, 
+            'success' => true,
             'conversations' => ConversationOnlyResource::collection($conversations)
         ], 200);
     }
@@ -36,16 +36,16 @@ class ConversationController extends Controller
     public function show(Conversation $conversation)
     {
 
-        if(Gate::allows('has-conversation', $conversation))
+        if (Gate::allows('has-conversation', $conversation))
             return response()->json([
-                'success' => true, 
+                'success' => true,
                 'conversations' => new ConversationResource($conversation)
             ], 200);
 
         return response()->json([
             'success' => false,
             'message' => 'permission denied'
-        ]); 
+        ]);
     }
 
     public function newMessage(Conversation $conversation, Request $request)
@@ -55,10 +55,10 @@ class ConversationController extends Controller
 
         $validator = Validator::make($credentials, $rules);
 
-        if($validator->fails())
+        if ($validator->fails())
             return response()->json([
-                'success' => false, 
-                'message' => $validator->errors() 
+                'success' => false,
+                'message' => $validator->errors()
             ]);
 
         // add the message to the conversation
@@ -67,14 +67,14 @@ class ConversationController extends Controller
                 'message' => $request->json()->get('message'),
                 'user_id' => Auth::id(),
                 'seen' => 0
-                ]);
+            ]);
 
         // sends the newMessage notif to the other user
         broadcast(new newMessageEvent($message))->toOthers();
 
         // set the update date column to now
         $conversation->update(['updated_at' => date_create('now')->format('Y-m-d H:i:s')]);
-    
+
         return response()->json([
             'sucess' => true,
             'message' => 'message sent succesfuly'

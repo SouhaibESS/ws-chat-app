@@ -46,7 +46,10 @@ class AuthController extends Controller
             return $this->respondWithToken($token);
         }
 
-        return response()->json(['error' => 'Unauthorized'], 401);
+        return response()->json([
+            'error' => 'Unauthorized',
+            'success' => false
+        ], 401);
     }
 
     public function register(Request $request)
@@ -55,8 +58,7 @@ class AuthController extends Controller
 
         $validator = Validator::make($credentials, $this->validationRules);
 
-        if($validator->fails())
-        {
+        if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'message' => $validator->errors()
@@ -73,8 +75,7 @@ class AuthController extends Controller
         // modify 'is_registered' to true 
         $email = $request->json()->get('email');
         $contacts = Contact::where('email', $email)->get(); // we can find multiple that contact in associated with other users
-        foreach($contacts as $contact) 
-        {
+        foreach ($contacts as $contact) {
             $contact->is_registered = 1;
             $contact->save();
         }
