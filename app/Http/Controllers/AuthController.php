@@ -93,6 +93,50 @@ class AuthController extends Controller
         return $this->respondWithToken($token);
     }
 
+
+    public function update(Request $request, User $user)
+    {
+        $rules = [
+            'name' => 'required|string|max:100',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+        ];
+
+        // return response()->json($request->all());
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()
+            ], 400);
+        }
+
+        // updating user credentials
+        $user->name = $request->input('name');
+
+        // moving the new avatar in the avatars folder
+        if ( $image = $request['avatar'] )
+        {
+            $imagePointer = str_replace(env('IMAGES_FOLDER'), './../public/images', $user->avatar);
+            $imagePointer = realpath($imagePointer);
+            // if the user already have an old picture , delete the old one
+            if(file_exists($imagePointer)) unlink($imagePointer);
+            
+            // replacing the user avatar
+            $avatarsFolder = env('IMAGES_FOLDER') . '/users';
+            $userAvatar = 'user_'. $user->id . '_avatar.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images/users') , $userAvatar);
+            $user->avatar = $avatarsFolder . '/' . $userAvatar; 
+        }
+
+        $user->save(); 
+
+        return response()->json([
+            'success' => true, 
+            'message' => 'user updated successfully'
+        ], 200);
+    }
+
     /**
      * Get the authenticated User
      *
