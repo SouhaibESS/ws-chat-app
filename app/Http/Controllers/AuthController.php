@@ -10,6 +10,7 @@ use Validator;
 use Illuminate\Support\Facades\Hash;
 use App\User;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Conversation;
 
 class AuthController extends Controller
 {
@@ -78,6 +79,13 @@ class AuthController extends Controller
         foreach ($contacts as $contact) {
             $contact->is_registered = 1;
             $contact->save();
+
+
+            // create conversation m3a users li m9ydini f contacts dyalhom
+            $otherUserId = $contact->user->id;
+            $userId = $user->id;
+            $conversation = Conversation::create();
+            $conversation->users()->attach([$userId, $otherUserId]);
         }
 
         $token = JWTAuth::fromUser($user);

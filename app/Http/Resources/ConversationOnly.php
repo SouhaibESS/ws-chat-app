@@ -36,7 +36,6 @@ class ConversationOnly extends JsonResource
 
         return [
             'id' => $this->id, 
-            'updated_at' => $this->updated_at,
             'last_message' => new MessageResource($lastMessage), 
             'other_user' => $other_user
         ];

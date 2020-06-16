@@ -39,7 +39,7 @@ class ConversationController extends Controller
         if (Gate::allows('has-conversation', $conversation))
             return response()->json([
                 'success' => true,
-                'conversations' => new ConversationResource($conversation)
+                'conversation' => new ConversationResource($conversation)
             ], 200);
 
         return response()->json([
@@ -71,9 +71,6 @@ class ConversationController extends Controller
 
         // sends the newMessage notif to the other user
         broadcast(new newMessageEvent($message))->toOthers();
-
-        // set the update date column to now
-        $conversation->update(['updated_at' => date_create('now')->format('Y-m-d H:i:s')]);
 
         return response()->json([
             'sucess' => true,

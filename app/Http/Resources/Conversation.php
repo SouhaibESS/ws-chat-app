@@ -34,7 +34,6 @@ class Conversation extends JsonResource
 
         return [
             'id' => $this->id, 
-            'updated_at' => $this->updated_at,
             'messages' => MessageResource::collection($this->messages), 
             'other_user' => $other_user
         ];
