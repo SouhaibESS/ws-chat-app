@@ -94,8 +94,9 @@ class AuthController extends Controller
     }
 
 
-    public function update(Request $request, User $user)
+    public function update(Request $request)
     {
+        $user = Auth::user();
         $rules = [
             'name' => 'required|string|max:100',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
@@ -129,6 +130,7 @@ class AuthController extends Controller
             $user->avatar = $avatarsFolder . '/' . $userAvatar; 
         }
 
+        // saving the changes
         $user->save(); 
 
         return response()->json([
