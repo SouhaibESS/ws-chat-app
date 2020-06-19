@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Http\Resources\ConversationOnly;
+use App\Http\Resources\Contact as ContactResource;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -19,6 +20,7 @@ class newMessageEvent implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $message;
+    public $targetUser;
 
     /**
      * Create a new event instance.
@@ -40,21 +42,31 @@ class newMessageEvent implements ShouldBroadcast
         $conversation = $this->message->conversation;
         $users = $conversation->users;
         foreach ($users as $user) {
-            if($user->id != Auth::id())
-                $targetUserId = $user->id;
+            if ($user->id != Auth::id())
+                $this->targetUser = $user;
         }
-        return new PrivateChannel('user.' . $targetUserId);
+        return new PrivateChannel('user.' . $this->targetUser->id);
     }
 
     public function broadcastWith()
     {
         $conversation = $this->message->conversation;
+        // yla kan deja l user m9yed had user lakhor f contacts list dyalo 
+        // ghadi nsifto lih contactUser
+        $user = Auth::user();
+        $contact = $this->targetUser->contacts()->where('email', $user->email)->first();
+        if ($contact)
+            $other_user = new ContactResource($contact);
+        else
+            $other_user = new UserResource($user);
+
         return [
-            'conversation_update' =>[
-                'id' => $conversation->id, 
+            'conversation_update' => [
+                'id' => $conversation->id,
                 'updated_at' => $conversation->updated_at,
-                'last_message' => new MessageResource($this->message), 
-                'other_user' => new UserResource(Auth::user())
-        ]];
+                'last_message' => new MessageResource($this->message),
+                'other_user' => $other_user
+            ]
+        ];
     }
 }

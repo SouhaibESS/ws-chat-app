@@ -116,25 +116,26 @@ class AuthController extends Controller
         $user->name = $request->input('name');
 
         // moving the new avatar in the avatars folder
-        if ( $image = $request['avatar'] )
-        {
-            $imagePointer = str_replace(env('IMAGES_FOLDER'), './../public/images', $user->avatar);
-            $imagePointer = realpath($imagePointer);
-            // if the user already have an old picture , delete the old one
-            if(file_exists($imagePointer)) unlink($imagePointer);
-            
+        if ($image = $request['avatar']) {
+            $noAvatar = env('IMAGES_FOLDER') . '/users/no_avatar.png';
+            if ($user->avatar !== $noAvatar) {
+                $imagePointer = str_replace(env('IMAGES_FOLDER'), './../public/images', $user->avatar);
+                $imagePointer = realpath($imagePointer);
+                // if the user already have an old picture , delete the old one
+                if (file_exists($imagePointer)) unlink($imagePointer);
+            }
             // replacing the user avatar
             $avatarsFolder = env('IMAGES_FOLDER') . '/users';
-            $userAvatar = 'user_'. $user->id . '_avatar.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images/users') , $userAvatar);
-            $user->avatar = $avatarsFolder . '/' . $userAvatar; 
+            $userAvatar = 'user_' . $user->id . '_avatar.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images/users'), $userAvatar);
+            $user->avatar = $avatarsFolder . '/' . $userAvatar;
         }
 
         // saving the changes
-        $user->save(); 
+        $user->save();
 
         return response()->json([
-            'success' => true, 
+            'success' => true,
             'message' => 'user updated successfully'
         ], 200);
     }
@@ -158,7 +159,10 @@ class AuthController extends Controller
     {
         $this->guard()->logout();
 
-        return response()->json(['message' => 'Successfully logged out', 200]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Successfully logged out', 200
+        ]);
     }
 
     /**

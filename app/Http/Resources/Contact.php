@@ -24,15 +24,18 @@ class Contact extends JsonResource
                 'email' => $this->email,
                 'id' => $user->id,
                 'is_registered' => $this->is_registered,
+                'avatar' => $user->avatar
             ];
         }
         else 
         {
+            $noAvatar = env('IMAGES_FOLDER') . '/users/no_avatar.png';
             return [
                 'name' => $this->name,
                 'email' => $this->email,
                 'id' => null,
                 'is_registered' => $this->is_registered,
+                'avatar' => $noAvatar
             ];
         }
     }

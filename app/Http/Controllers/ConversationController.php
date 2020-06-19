@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\Conversation as ConversationResource;
 use App\Http\Resources\ConversationOnly as ConversationOnlyResource;
+use App\Http\Resources\Message as MessageResource;
 use App\Message;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Validator;
 
@@ -68,13 +70,17 @@ class ConversationController extends Controller
                 'user_id' => Auth::id(),
                 'seen' => 0
             ]);
+        
+        // update conversation  
+        $now = Carbon::now();
+        $conversation->update(['updated_at' => $now->toDateTimeString()]); 
 
         // sends the newMessage notif to the other user
         broadcast(new newMessageEvent($message))->toOthers();
 
         return response()->json([
             'sucess' => true,
-            'message' => 'message sent succesfuly'
+            'message' => new MessageResource($message)
         ]);
     }
 }

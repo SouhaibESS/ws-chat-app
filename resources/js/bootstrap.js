@@ -1,4 +1,4 @@
-window._ = require('lodash');
+window._ = require("lodash");
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
@@ -6,9 +6,9 @@ window._ = require('lodash');
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-window.axios = require('axios');
+window.axios = require("axios");
 
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
@@ -16,35 +16,35 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
  * allows your team to easily build robust real-time web applications.
  */
 
-
 // this part is just for test purposes
-import Echo from 'laravel-echo';
+import Echo from "laravel-echo";
 
-window.Pusher = require('pusher-js');
+window.Pusher = require("pusher-js");
 
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
-const token = urlParams.get('token')
-console.log(token);
+const token = urlParams.get("token");
 
 window.Echo = new Echo({
-    broadcaster: 'pusher',
+    broadcaster: "pusher",
     key: process.env.MIX_PUSHER_APP_KEY,
     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
     wsHost: window.location.hostname,
     wsPort: 6001,
     wssPort: 6001,
     disableStats: true,
-    enabledTransports: ['ws', 'wss'],
+    enabledTransports: ["ws", "wss"],
     forceTLS: false,
-    authEndpoint: '/broadcasting/auth',
+    authEndpoint: "http://127.0.0.1:8000/broadcasting/auth",
 
     auth: {
         headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: 'application/json',
-        },
-      },
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json"
+        }
+    }
 });
+console.log(window.Echo);
+
 
 // it ends here

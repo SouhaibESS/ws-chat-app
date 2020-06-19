@@ -25327,7 +25327,7 @@ window._ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
  */
 
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
@@ -25339,26 +25339,26 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 window.Pusher = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
 var queryString = window.location.search;
 var urlParams = new URLSearchParams(queryString);
-var token = urlParams.get('token');
-console.log(token);
+var token = urlParams.get("token");
 window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
-  broadcaster: 'pusher',
+  broadcaster: "pusher",
   key: "chat-app-key",
   cluster: "mt1",
   wsHost: window.location.hostname,
   wsPort: 6001,
   wssPort: 6001,
   disableStats: true,
-  enabledTransports: ['ws', 'wss'],
+  enabledTransports: ["ws", "wss"],
   forceTLS: false,
-  authEndpoint: '/broadcasting/auth',
+  authEndpoint: "http://127.0.0.1:8000/broadcasting/auth",
   auth: {
     headers: {
       Authorization: "Bearer ".concat(token),
-      Accept: 'application/json'
+      Accept: "application/json"
     }
   }
-}); // it ends here
+});
+console.log(window.Echo); // it ends here
 
 /***/ }),
 
