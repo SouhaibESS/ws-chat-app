@@ -20,7 +20,7 @@ class ContactController extends Controller
 
     public function index()
     {
-        $contacts = Auth::user()->contacts;
+        $contacts = Auth::user()->contacts()->orderBy('name')->get();
 
         return response()->json([
             'success' => true, 
