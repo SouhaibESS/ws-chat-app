@@ -23,7 +23,7 @@ class ContactController extends Controller
         $contacts = Auth::user()->contacts()->orderBy('name')->get();
 
         return response()->json([
-            'success' => true, 
+            'success' => true,
             'contacts' => ContactResource::collection($contacts)
         ]);
     }
@@ -32,27 +32,36 @@ class ContactController extends Controller
     {
         $rules = [
             'name' => 'required',
-            'email' => 'email|unique:contacts'
+            'email' => 'required|email'
         ];
         $credentials = request()->json()->all();
 
         $validator = Validator::make($credentials, $rules);
 
-        if($validator->fails())
-        {
+        if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'message' => $validator->errors()
             ], 400);
         }
 
-        // checkin if the contact is already registred in the app
         $contactEmail = $request->json()->get('email');
+        // checking if the email is already set to an existing contact
+        $emailCheck = Auth::user()->contacts()->where('email', $contactEmail)->first();
+        if ($emailCheck) {
+            return response()->json([
+                'success' => false,
+                'message' => [
+                    'email' => 'this email is already been taken, use another email'
+                ]
+            ]);
+        }
+
+        // checkin if the contact is already registred in the app
         $isRegistered = 0;
-        
         $user = User::where('email', $contactEmail)->first();
-        if($user)
-        { 
+
+        if ($user) {
             $isRegistered = 1;
 
             // create a conversation with no messages
@@ -69,7 +78,7 @@ class ContactController extends Controller
         ]);
 
         return response()->json([
-            'success' => true, 
+            'success' => true,
             'message' => 'contact created succesfuly'
         ]);
     }

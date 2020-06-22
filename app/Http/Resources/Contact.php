@@ -16,21 +16,20 @@ class Contact extends JsonResource
     public function toArray($request)
     {
         // return parent::toArray($request);
-        if($this->is_registered)
-        {
+        if ($this->is_registered) {
             $user = User::where('email', $this->email)->first();
             return [
+                'contact_id' => $this->id,
                 'name' => $this->name,
                 'email' => $this->email,
                 'id' => $user->id,
                 'is_registered' => $this->is_registered,
                 'avatar' => $user->avatar
             ];
-        }
-        else 
-        {
+        } else {
             $noAvatar = env('IMAGES_FOLDER') . '/users/no_avatar.png';
             return [
+                'contact_id' => $this->id,
                 'name' => $this->name,
                 'email' => $this->email,
                 'id' => null,
