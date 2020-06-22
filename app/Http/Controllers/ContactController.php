@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\Contact as ContactResource;
 use App\Conversation;
 use App\User;
+use Illuminate\Support\Facades\Gate;
 use Validator;
 
 class ContactController extends Controller
@@ -80,6 +81,53 @@ class ContactController extends Controller
         return response()->json([
             'success' => true,
             'contact' => new ContactResource($contact)
+        ]);
+    }
+
+    public function update(Request $request, Contact $contact)
+    {
+        if (Gate::denies('has-contact', $contact)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'you can not update this contact'
+            ]);
+        }
+        $rules = [
+            'name' => 'required|min:3'
+        ];
+
+        $credentials = request()->json()->all();
+        $validator = Validator::make($credentials, $rules);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()
+            ], 400);
+        }
+
+        $contact->update(['name' => $request->json()->get('name')]);
+
+        return response()->json([
+            'success' => true,
+            'contact' => new ContactResource($contact)
+        ]);
+    }
+
+    public function delete(Contact $contact)
+    {
+        if (Gate::denies('has-contact', $contact)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'you can\' delete this user'
+            ]);
+        }
+
+        $contact->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'contact deleted succesfuly'
         ]);
     }
 }

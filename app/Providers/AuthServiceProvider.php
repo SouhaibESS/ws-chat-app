@@ -29,5 +29,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('has-conversation', function ($user, $conversation) {
             return $user->hasConversation($conversation);
         });
+
+        Gate::define('has-contact', function ($user, $contact) {
+            return $user->hasContact($contact);
+        });
     }
 }

@@ -35,6 +35,8 @@ Route::group(['middleware' => 'auth:api',], function ($router) {
 
     Route::get('contacts', 'ContactController@index'); // get the list of the contacts
     Route::post('contacts', 'ContactController@store'); // add a new contact to the list 
+    Route::put('contacts/{contact}', 'ContactController@update'); // update contact
+    Route::delete('contacts/{contact}', 'ContactController@delete'); // delete contact
 
     Route::get('get-csrf-token', function() {
         return response()->json(['csrf-token' => csrf_token()]);
