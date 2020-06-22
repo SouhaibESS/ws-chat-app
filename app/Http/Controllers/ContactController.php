@@ -71,7 +71,7 @@ class ContactController extends Controller
             $conversation->users()->attach([$authUserId, $otherUserId]);
         }
 
-        Auth::user()->contacts()->create([
+        $contact = Auth::user()->contacts()->create([
             'name' => $request->json()->get('name'),
             'email' => $request->json()->get('email'),
             'is_registered' => $isRegistered
@@ -79,7 +79,7 @@ class ContactController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'contact created succesfuly'
+            'contact' => new ContactResource($contact)
         ]);
     }
 }

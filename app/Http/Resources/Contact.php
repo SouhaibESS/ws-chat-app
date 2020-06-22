@@ -27,7 +27,7 @@ class Contact extends JsonResource
                 'avatar' => $user->avatar
             ];
         } else {
-            $noAvatar = env('IMAGES_FOLDER') . '/users/no_avatar.png';
+            $noAvatar = env('IMAGES_FOLDER') . '/users/no_image.png';
             return [
                 'contact_id' => $this->id,
                 'name' => $this->name,
