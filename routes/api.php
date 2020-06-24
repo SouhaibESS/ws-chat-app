@@ -32,6 +32,7 @@ Route::group(['middleware' => 'auth:api',], function ($router) {
     Route::get('conversations', 'ConversationController@index'); // get all the conversations
     Route::get('conversations/{conversation}', 'ConversationController@show'); // get the messages of a conversation
     Route::post('conversations/{conversation}', 'ConversationController@newMessage'); // add a new message to the conversation
+    Route::put('conversations/{conversation}', 'ConversationController@messagesSeen'); // update messages seen to true and notify the sender
 
     Route::get('contacts', 'ContactController@index'); // get the list of the contacts
     Route::post('contacts', 'ContactController@store'); // add a new contact to the list 

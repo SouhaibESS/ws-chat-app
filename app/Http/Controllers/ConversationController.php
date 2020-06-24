@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Conversation;
+use App\Events\messagesSeenEvent;
 use App\Events\newMessageEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -70,10 +71,10 @@ class ConversationController extends Controller
                 'user_id' => Auth::id(),
                 'seen' => 0
             ]);
-        
+
         // update conversation  
         $now = Carbon::now();
-        $conversation->update(['updated_at' => $now->toDateTimeString()]); 
+        $conversation->update(['updated_at' => $now->toDateTimeString()]);
 
         // sends the newMessage notif to the other user
         broadcast(new newMessageEvent($message))->toOthers();
@@ -81,6 +82,27 @@ class ConversationController extends Controller
         return response()->json([
             'sucess' => true,
             'message' => new MessageResource($message)
+        ]);
+    }
+
+    public function messagesSeen(Conversation $conversation)
+    {
+        $messages = $conversation->messages()->where('seen', 0)->get();
+
+        if ($messages)
+            foreach ($messages as $message) {
+                if ($message->user_id != Auth::id())
+                    $message->update([
+                        'seen' => 1
+                    ]);
+            }
+
+        // notify the sender that he's messages are seen
+        broadcast(new messagesSeenEvent($conversation))->toOthers();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'messages seen',
         ]);
     }
 }
